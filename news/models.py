@@ -1,51 +1,8 @@
 from django.db import models
 from datetime import datetime
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.db.models import Sum
-from django.contrib.contenttypes.fields import GenericRelation
-
-
-class LikeDislikeManager(models.Manager):
-    use_for_related_fields = True
-
-    def likes(self):
-        # Забираем queryset с записями больше 0
-        return self.get_queryset().filter(vote__gt=0)
-
-    def dislikes(self):
-        # Забираем queryset с записями меньше 0
-        return self.get_queryset().filter(vote__lt=0)
-
-    def sum_rating(self):
-        # Забираем суммарный рейтинг
-        return self.get_queryset().aggregate(Sum('vote')).get('vote__sum') or 0
-
-    def articles(self):
-        return self.get_queryset().filter(content_type__model='News').order_by('-articles__pub_date')
-
-    def comments(self):
-        return self.get_queryset().filter(content_type__model='Comment').order_by('-comments__pub_date')
-
-
-class LikeDislike(models.Model):
-    LIKE = 1
-    DISLIKE = -1
-
-    VOTES = (
-        (DISLIKE, 'Не нравится'),
-        (LIKE, 'Нравится')
-    )
-
-    vote = models.SmallIntegerField(verbose_name="Голос", choices=VOTES)
-    user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
-
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()
-
-    objects = LikeDislikeManager()
+# from django.db.models import Sum
+from django.contrib.auth.models import User
 
 
 # one_to_one_relation = models.OneToOneField(some_model)
@@ -57,6 +14,14 @@ class Author(models.Model):
     full_name = models.CharField(max_length=150)
     name = models.CharField(max_length=50, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)
+
+    def update_rating(self):
+        rating_new = sum(News.objects.filter(author__news__article=self).values_list('rating', flat=True))
+        rating_comment = sum(Comment.objects.filter(user__comment__news=self).values_list('rating', flat=True))
+        rating_comment_news = sum(Comment.objects.filter(user__comment=self).values_list('rating', flat=True))
+        self.rating = rating_new * 3 + rating_comment + rating_comment_news
+        self.save()
 
     def some_method(self):
         self.name = self.full_name.split()[0]
@@ -68,16 +33,30 @@ class News(models.Model):
     title = models.CharField(max_length=50)
     article = models.TextField()
     article_or_news = models.BooleanField(default=True)
-    news_reit = models.IntegerField(default=0)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     categories = models.ManyToManyField('Categories', through='NewsCategories')
-    # likes = models.PositiveIntegerField(default=0)
-    # user_likes = models.ManyToManyField(User)
-    votes = GenericRelation(LikeDislike, related_query_name='News')
+    rating = models.IntegerField(blank=False, default=0)
 
     def news_date(self):
         self.time = datetime.now()
         self.save()
+
+    def like_new(self):
+        self.rating += 1
+        self.save()
+
+    def dislike_new(self):
+        self.rating -= 1
+        self.save()
+
+    # def serv(self, request):
+    #     if request.method == 'POST':
+    #         if request.POST.get('like'):
+    #             self.like_news()
+    #         if request.POST.get('dislike'):
+    #             self.dislike_news()
+    #
+    #     return super(News, self).serv(request)
 
 
 class Categories(models.Model):
@@ -94,9 +73,25 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     time = models.TimeField(auto_now=False, auto_now_add=True)
-    comment_reit = models.IntegerField(default=0)
-    votes = GenericRelation(LikeDislike, related_query_name='Comment')
+    rating = models.IntegerField(blank=False, default=0)
 
     def comment_date(self):
         self.time = datetime.now()
         self.save()
+
+    def like_comment(self):
+        self.rating += 1
+        self.save()
+
+    def dislike_comment(self):
+        self.rating -= 1
+        self.save()
+
+    # def serv(self, request):
+    #     if request.method == 'POST':
+    #         if request.POST.get('like'):
+    #             self.like_comment()
+    #         if request.POST.get('dislike'):
+    #             self.dislike_comment()
+    #
+    #     return super(Author, self).serv(request)

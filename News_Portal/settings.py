@@ -40,11 +40,11 @@ INSTALLED_APPS = [
     'news',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'users.apps.UsersConfig',
+    # 'users.apps.UsersConfig',
 ]
 
 SITE_ID = 1
-AUTH_USER_MODEL = 'users.CustomUser'
+# AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
