@@ -14,32 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-# from django.contrib.auth.models import User
 from django.urls import path, include
-# from django.conf.urls import url
-# from django.contrib.auth.decorators import login_required
-#
-# from news import views
-# from news.models import LikeDislike
-# from news.models import News, Comment
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pages/', include('django.contrib.flatpages.urls'))
 ]
-
-# app_name = 'ajax'
-# urlpatterns = [
-#     url(r'^article/(?P<pk>\d+)/like/$',
-#         login_required(views.VotesView.as_view(model=News, vote_type=LikeDislike.LIKE)),
-#         name='article_like'),
-#     url(r'^article/(?P<pk>\d+)/dislike/$',
-#         login_required(views.VotesView.as_view(model=News, vote_type=LikeDislike.DISLIKE)),
-#         name='article_dislike'),
-#     url(r'^comment/(?P<pk>\d+)/like/$',
-#         login_required(views.VotesView.as_view(model=Comment, vote_type=LikeDislike.LIKE)),
-#         name='comment_like'),
-#     url(r'^comment/(?P<pk>\d+)/dislike/$',
-#         login_required(views.VotesView.as_view(model=Comment, vote_type=LikeDislike.DISLIKE)),
-#         name='comment_dislike'),
-# ]
