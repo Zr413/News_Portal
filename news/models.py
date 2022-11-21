@@ -9,12 +9,13 @@ from django.contrib.auth.models import User
 # one_to_many_relation = models.ForeignKey(some_model)
 # many_to_many_relation = models.ManyToManyField(some_model)
 
-
+# Таблица с сущностью автора
 class Author(models.Model):
     full_name = models.CharField(max_length=150)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
 
+    # Обновление рейтинга автора на основании лайков и дизлайков
     def update_rating(self):
         news_rat = News.objects.aggregate(rat_a=Sum('rating'))
         n_rat = news_rat.get('rat_a')
@@ -26,15 +27,18 @@ class Author(models.Model):
         self.save()
 
 
+# Промежуточная таблица для новостей и категорий
 class NewsCategories(models.Model):
     new_key = models.ForeignKey('News', on_delete=models.CASCADE)
     cat_key = models.ForeignKey('Categories', on_delete=models.CASCADE)
 
 
+# Категории
 class Categories(models.Model):
     title = models.CharField(max_length=250, unique=True)
 
 
+# Новости
 class News(models.Model):
     time = models.DateTimeField(auto_now=False, auto_now_add=True)
     title = models.CharField(max_length=50)
@@ -50,10 +54,12 @@ class News(models.Model):
     new_cat = models.ManyToManyField(Categories, through='NewsCategories')
     rating = models.IntegerField(blank=False, default=0)
 
+    # Время добавления
     def date(self):
         self.time = datetime.now()
         self.save()
 
+    # Лайки и дизлайки новостей
     def like(self):
         self.rating += 1
         self.save()
@@ -62,12 +68,14 @@ class News(models.Model):
         self.rating -= 1
         self.save()
 
+    # Превью новости
     def preview(self):
         if len(self.article) > 124:
             return f'{self.article[:124]}...'
         return f'{self.article}'
 
 
+# Таблица с комментариями
 class Comment(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -75,10 +83,12 @@ class Comment(models.Model):
     time = models.DateTimeField(auto_now=False, auto_now_add=True)
     rating = models.IntegerField(blank=False, default=0)
 
+    # Время добавления
     def date(self):
         self.time = datetime.now()
         self.save()
 
+    # Лайки и дизлайки новостей
     def like(self):
         self.rating += 1
         self.save()
