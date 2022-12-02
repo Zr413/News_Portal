@@ -6,19 +6,24 @@
 
 {% block content %}
     <br>
-    <form action="" method="get">
-        {{ filterset.form.as_p }}
-        <input type="submit" value="Найти"/>
-    </form>
+
+    <form action="{% url 'news_search' %}" class="navbar-form navbar-left" method="get">
+
+        <div class="form-group">
+            <input type="text" name="q" class="form-control" placeholder="Введите запрос">
+                    </div>
+
+        <button type="submit" class="btn btn-default">Поиск</button>
+            </form>
     <h1>Результат поиска</h1>
     {% for art in articlesearch %}
         <article>
-{#            <a href="{{ art.get_absolute_url }}">#}
-                <h6>{{ art_views.time|date:'d.m.Y H:i' }}</h6>
+            <a href="{{ art.get_absolute_url }}">
+{#                <h6>{{ art_views.time|date:'d.m.Y H:i' }}</h6>#}
                 <h2>{{ art.article_title }}</h2>
-                <p>Автор: {{ art_views.author.full_name }}</p>
+{#                <p>Автор: {{ art_views.author.full_name }}</p>#}
                 <hr>
-{#            </a>#}
+            </a>
             {{ art.article|safe }}
             <form action={{ art.get_absolute_url }}>
                 <input type="submit" value="Читать далее">

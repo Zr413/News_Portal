@@ -15,16 +15,20 @@
 
     <!-- <h3>{{ time_now|date:'d M Y l' }}</h3> -->
     <br>
-    <form action="{% url 'news_search' %}" class="navbar-form navbar-left" method="get">
-        <div class="form-group">
-            <input type="text" name="q" class="form-control" placeholder="Введите запрос">
-        </div>
-        <button type="submit" class="btn btn-default">Поиск</button>
-    </form>
-{#    <form action="" method="get">#}
-{#        {{ filterset.form.as_p }}#}
-{#        <input type="submit" value="Найти"/>#}
+{#    <form action="{% url 'news_search' %}" class="navbar-form navbar-left" method="get">#}
+{#        <div class="form-group">#}
+{#            <input type="text" name="q" class="form-control" placeholder="Введите запрос">#}
+{#        </div>#}
+{#        <button type="submit" class="btn btn-default">Поиск</button>#}
 {#    </form>#}
+    <form action="" method="get">
+        {{ filterset.form.as_p }}
+        <input type="submit" value="Найти"/>
+    </form>
+{#    <form action={% url 'news_search' %}>#}
+{#        <input type="submit" value="Найти">#}
+{#    </form>#}
+    <br>
     <form action={% url 'news_create' %}>
         <input type="submit" value="Создать новость">
     </form>

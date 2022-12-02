@@ -7,9 +7,9 @@ from .models import News
 
 # Создаем свой набор фильтров для модели News.
 class NewsFilter(FilterSet):
-    time = DateFromToRangeFilter(
+    time = DateFilter(
         field_name='time',
-        lookup_expr='qt',
+        lookup_expr='icontains',
         widget=DateInput(
             format='%Y-%m-%d',
             attrs={'type': 'date'},
