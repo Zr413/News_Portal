@@ -1,0 +1,32 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}!
+<!-- Подключаем новый файл с нашим тегом -->
+
+{% load custom_tags %}
+
+{% block content %}
+    <br>
+    <form action="" method="get">
+        {{ filterset.form.as_p }}
+        <input type="submit" value="Найти"/>
+    </form>
+    <h1>Результат поиска</h1>
+    {% for art in articlesearch %}
+        <article>
+{#            <a href="{{ art.get_absolute_url }}">#}
+                <h6>{{ art_views.time|date:'d.m.Y H:i' }}</h6>
+                <h2>{{ art.article_title }}</h2>
+                <p>Автор: {{ art_views.author.full_name }}</p>
+                <hr>
+{#            </a>#}
+            {{ art.article|safe }}
+            <form action={{ art.get_absolute_url }}>
+                <input type="submit" value="Читать далее">
+            </form>
+            {#          <p><a class="btn btn-default btn-sm" href="{{ art.get_absolute_url }}">Читать далее</a></p>#}
+        </article>
+    {% empty %}
+        <p>Не найдено публикаций по вашему запросу<br>Попробуйте повторить запрос с другой формулировкой</p>
+    {% endfor %}
+
+{% endblock %}

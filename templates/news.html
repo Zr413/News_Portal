@@ -14,28 +14,58 @@
     <!-- Вот так выглядело использование переменной и фильтра -->
 
     <!-- <h3>{{ time_now|date:'d M Y l' }}</h3> -->
+    <br>
+    <form action="{% url 'news_search' %}" class="navbar-form navbar-left" method="get">
+        <div class="form-group">
+            <input type="text" name="q" class="form-control" placeholder="Введите запрос">
+        </div>
+        <button type="submit" class="btn btn-default">Поиск</button>
+    </form>
+{#    <form action="" method="get">#}
+{#        {{ filterset.form.as_p }}#}
+{#        <input type="submit" value="Найти"/>#}
+{#    </form>#}
+    <form action={% url 'news_create' %}>
+        <input type="submit" value="Создать новость">
+    </form>
+    {#        <form action={% url 'news_search' %} method="get">#}
+    {#            {{ filterset.form.non_field_errors }}#}
+    {##}
+    {#            {{ filterset.form.name__icontains.errors }}#}
+    {#            <label for="{{ filterset.form.as_p.id_for_label }}">Search</label>#}
+    {#            <input#}
+    {#                    id="{{ filterset.form.News__icontains.id }}"#}
+    {#                    title="{{ filterset.form.as_p }}"#}
+    {#                    ="{{ filterset.form.News__icontains.value }}"#}
+    {#                    class="form-control"#}
+    {#            >#}
+    {#            <input type="submit" class="mt-3 btn-primary" value="Найти"/>#}
+    {#        </form>#}
+{#    <form action="{% url 'news_search' %}" class="navbar-form navbar-left" method="get">#}
+{##}
+{#        <div class="form-group">#}
+{#            <input type="text" name="q" class="form-control" placeholder="Введите запрос">#}
+{#        </div>#}
+{#        <button type="submit" class="btn btn-default">Поиск</button>#}
+{#    </form>#}
+{#    <input type="submit" value="Создать новость">#}
+{#    </form>#}
 
-    <!-- А вот так мы используем наш тег-->
-
-    <h3>{% current_time '%d %b %Y %A' %}</h3>
+    <h3>{% current_time '%d.%m.%Y %A' %}</h3>
     <h3> {{ next_sale|default_if_none:"Следим за новостями!" }} </h3>
 
     <hr>
     {% if articleviews %}
         <table>
-{#            <tr>#}
-{#                <td>Дата</td>#}
-{#                <td>Тема</td>#}
-{#                <td>Краткое содержание</td>#}
-{#                <td>Цена</td>#}
-{#                <td>Количество</td>#}
-{#            </tr>#}
-
             {% for news in articleviews %}
                 <div>
-                    <h6>{{ news.time|date:'d M Y' }}</h6>
-                    <h2><a href="http://127.0.0.1:8000/news/{{ news.id }}">{{ news.title }}</a></h2>
-                    <p>{{ news.article|truncatewords:10|censor }}</p>
+                    <h6>{{ news.time|date:'d.m.Y H:i' }}</h6>
+                    <h4><a href="{% url 'news-details' news.pk %}">{{ news.title }}</a></h4>
+                    {#                    <p>{{ news.article|truncatewords:10|censor }}</p>#}
+                    <ul>
+                        {#                        <li><a href="{% url 'news-details' news %}">{{ news.title }}</a></li>#}
+                        <p>{{ news.article|truncatewords:10|censor }}</p>
+                    </ul>
                     <hr>
                 </div>
             {% endfor %}
@@ -44,6 +74,26 @@
     {% else %}
         <h2>Новостей нет!</h2>
 
+    {% endif %}
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {# Информация о текущей странице #}
+    {{ page_obj.number }}
+
+
+    {# Информация о следующих страницах #}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
     {% endif %}
 {% endblock content %}
 
