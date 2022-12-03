@@ -1,7 +1,5 @@
-from django_filters import DateFilter
-from django_filters import DateFromToRangeFilter
+from django_filters import DateFilter, FilterSet, AllValuesFilter
 from django.forms import DateInput
-from django_filters import FilterSet
 from .models import News
 
 
@@ -12,11 +10,11 @@ class NewsFilter(FilterSet):
         lookup_expr='icontains',
         widget=DateInput(
             format='%Y-%m-%d',
-            attrs={'type': 'date'},
+            attrs={'type': 'date'}
         ),
     )
-    # label = 'tme',
-    # empty_label = 'Введите значение'
+    article_or_news = AllValuesFilter()
+
 
     class Meta:
         model = News

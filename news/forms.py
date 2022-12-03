@@ -46,11 +46,7 @@ class NewsForm(forms.ModelForm):
         return article
 
 
-class ArticleNew(forms.ModelForm):
-    article_or_news = forms.CharField()
-    message = forms.CharField(widget=forms.Textarea)
-
-    def art(self):
-        # send email using the self.cleaned_data dictionary
-        pass
+# class Select(forms.ModelForm):
+#     CATEGORY_CHOICES = News.CATEGORY_CHOICES
+#     article_or_news = forms.ChoiceField(widget=forms.Select, choices=CATEGORY_CHOICES)
 

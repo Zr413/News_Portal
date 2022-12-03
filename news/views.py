@@ -5,7 +5,7 @@ from .models import News, Author
 from datetime import datetime
 from .filters import NewsFilter
 from django.urls import reverse_lazy
-from .forms import NewsForm, ArticleNew
+from .forms import NewsForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Q
@@ -16,7 +16,7 @@ class NewsList(ListView):
     ordering = '-time'
     template_name = 'news.html'
     context_object_name = 'articleviews'
-    paginate_by = 4
+    paginate_by = 3
 
     # Переопределяем функцию получения списка новостей
     def get_queryset(self):
@@ -71,18 +71,38 @@ class NewsDelete(DeleteView):
     success_url = reverse_lazy('news_list')
 
 
+# class NewsSearch(ListView):
+#     model = News
+#     template_name = 'news_search.html'
+#     context_object_name = 'articlesearch'
+#
+#     def get_queryset(self):
+#         # Получаем не отфильтрованный кверисет всех моделей
+#         queryset = News.objects.all()
+#         q = self.request.GET.get("q")
+#         if q:
+#             return queryset.filter(Q(title__icontains=q) | Q(time__icontains=q) | Q(article_or_news__icontains=q))
+#         return queryset
+
+
 class NewsSearch(ListView):
     model = News
     template_name = 'news_search.html'
     context_object_name = 'articlesearch'
+    ordering = ['-time']
+    paginate_by = 4
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterset'] = self.filterset
+        context['time_now'] = datetime.utcnow()
+        return context
 
     def get_queryset(self):
-        # Получаем не отфильтрованный кверисет всех моделей
-        queryset = News.objects.all()
-        q = self.request.GET.get("q")
-        if q:
-            return queryset.filter(Q(title__icontains=q) | Q(article__icontains=q))
-        return queryset
+        queryset = super().get_queryset()
+        self.filterset = NewsFilter(self.request.GET, queryset)
+        return self.filterset.qs
+
 
 # class ContactFormView(News):
 #     template_name = 'news_create.html'

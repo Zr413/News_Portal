@@ -1,37 +1,56 @@
 {% extends 'flatpages/default.html' %}
-{% load custom_filters %}!
+{% load custom_filters %}
 <!-- Подключаем новый файл с нашим тегом -->
 
-{% load custom_tags %}
+{% load custom_tags %}!
 
 {% block content %}
     <br>
+    {##}
+    <form action="">
+        {{ filterset.form.as_p }}
+        <input type="submit" value="Найти">
+    </form>
 
-    <form action="{% url 'news_search' %}" class="navbar-form navbar-left" method="get">
-
-        <div class="form-group">
-            <input type="text" name="q" class="form-control" placeholder="Введите запрос">
-                    </div>
-
-        <button type="submit" class="btn btn-default">Поиск</button>
-            </form>
     <h1>Результат поиска</h1>
-    {% for art in articlesearch %}
-        <article>
-            <a href="{{ art.get_absolute_url }}">
-{#                <h6>{{ art_views.time|date:'d.m.Y H:i' }}</h6>#}
-                <h2>{{ art.article_title }}</h2>
-{#                <p>Автор: {{ art_views.author.full_name }}</p>#}
-                <hr>
-            </a>
-            {{ art.article|safe }}
-            <form action={{ art.get_absolute_url }}>
-                <input type="submit" value="Читать далее">
-            </form>
-            {#          <p><a class="btn btn-default btn-sm" href="{{ art.get_absolute_url }}">Читать далее</a></p>#}
-        </article>
-    {% empty %}
-        <p>Не найдено публикаций по вашему запросу<br>Попробуйте повторить запрос с другой формулировкой</p>
-    {% endfor %}
+    {% if articlesearch %}
+        <table>
+            {% for art in articlesearch %}
+                <article>
+                    <div>
+                        <h6>{{ art.time|date:'d.m.Y H:i' }}</h6>
+                        <h4>{{ art.title }}</h4>
+                    </div>
+                    <form action={{ art.get_absolute_url }}>
+                        <input type="submit" value="Читать далее">
+                    </form>
+                    <hr>
+                </article>
+            {% empty %}
+                <p>Не найдено публикаций по вашему запросу<br>Попробуйте повторить запрос с другой формулировкой</p>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            ...
+            <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+
+    {# Информация о текущей странице #}
+    {{ page_obj.number }}
+
+
+    {# Информация о следующих страницах #}
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            ...
+            <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
 
 {% endblock %}
