@@ -1,6 +1,6 @@
 from django_filters import DateFilter, FilterSet, AllValuesFilter
 from django.forms import DateInput
-from .models import News
+from .models import News, Categories
 
 
 # Создаем свой набор фильтров для модели News.
