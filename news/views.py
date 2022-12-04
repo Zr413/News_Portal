@@ -20,7 +20,7 @@ class NewsList(ListView):
     ordering = '-time'
     template_name = 'news.html'
     context_object_name = 'articleviews'
-    paginate_by = 3
+    paginate_by = 4
 
     # Переопределяем функцию получения списка новостей
     def get_queryset(self):
