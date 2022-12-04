@@ -15,7 +15,6 @@ class NewsFilter(FilterSet):
     )
     article_or_news = AllValuesFilter()
 
-
     class Meta:
         model = News
         fields = {'title': ['icontains']}

@@ -49,7 +49,7 @@ class News(models.Model):
         (NEWS, 'Новости'),
         (ARTICLE, 'Статья'),
     )
-    article_or_news = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=ARTICLE)
+    article_or_news = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=NEWS)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     new_cat = models.ManyToManyField(Categories, through='NewsCategories')
     rating = models.IntegerField(blank=False, default=0)

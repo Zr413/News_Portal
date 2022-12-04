@@ -6,15 +6,16 @@
 {% load custom_tags %}
 <!-- Название у нас будет Product -->
 {% block title %}
-News
+    News
 {% endblock title %}
 
 <!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
 {% block content %}
-{#<h1>{{ art_views.time }}</h1>#}
+    {#<h1>{{ art_views.time }}</h1>#}
     <h6>{{ art_views.time|date:'d.m.Y H:i' }}</h6>
     <h2>{{ art_views.title }}</h2>
     <p>{{ art_views.article|censor }}</p>
+    <p>{{ art_views.article_or_news }}</p>
     <p>Автор: {{ art_views.author.full_name }}</p>
     <hr>
     <form action={% url 'news_edit' art_views.pk %}>

@@ -1,6 +1,8 @@
 from django.views.generic import (ListView, DetailView,
                                   CreateView, UpdateView,
                                   DeleteView, TemplateView)
+
+import news
 from .models import News, Author
 from datetime import datetime
 from .filters import NewsFilter
@@ -8,9 +10,11 @@ from django.urls import reverse_lazy
 from .forms import NewsForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.db.models import Q
 
 
+# from django.db.models import Q
+
+# Вывод списка новостей и статей
 class NewsList(ListView):
     model = News
     ordering = '-time'
@@ -32,12 +36,14 @@ class NewsList(ListView):
         return context
 
 
+# Вывод статьи или новости
 class NewsDetail(DetailView):
     model = News
     template_name = 'new.html'
     context_object_name = 'art_views'
 
 
+# Создание новости
 class NewsCreate(CreateView):
     form_class = NewsForm
     model = News
@@ -46,7 +52,7 @@ class NewsCreate(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = Author.objects.get(id=self.request.user.author.id)
-        return super().form_valid(form) and HttpResponseRedirect('/news/')
+        return super().form_valid(form) and HttpResponseRedirect('/')
 
     def create_news(request):
         form = NewsForm()
@@ -54,17 +60,19 @@ class NewsCreate(CreateView):
             form = NewsForm(request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect('/news/')
+                return HttpResponseRedirect('/')
 
         return render(request, 'news_create.html', {'form': form})
 
 
+# Обновление новости
 class NewsUpdate(UpdateView):
     form_class = NewsForm
     model = News
     template_name = 'news_edit.html'
 
 
+# Удаление новости
 class NewsDelete(DeleteView):
     model = News
     template_name = 'news_delete.html'
@@ -84,7 +92,7 @@ class NewsDelete(DeleteView):
 #             return queryset.filter(Q(title__icontains=q) | Q(time__icontains=q) | Q(article_or_news__icontains=q))
 #         return queryset
 
-
+# Поиск по полям статей и новостей
 class NewsSearch(ListView):
     model = News
     template_name = 'news_search.html'
@@ -104,12 +112,38 @@ class NewsSearch(ListView):
         return self.filterset.qs
 
 
-# class ContactFormView(News):
-#     template_name = 'news_create.html'
-#     form_class = ArticleNew
-#     success_url = '/article/'
-#
-#     def form_valid(self, form):
-#         self.objects = form.save(commit=False)
-#         article_or_news = News.article_or_news
-#         return super().form_valid(form)
+# Создание статьи
+class ArticleCreate(CreateView):
+    form_class = NewsForm
+    model = News
+    template_name = 'article_create.html'
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.author = Author.objects.get(id=self.request.user.author.id)
+        self.object.article_or_news = News.ARTICLE
+        return super().form_valid(form) and HttpResponseRedirect('/')
+
+    def create_news(request):
+        form = NewsForm()
+        if request.method == 'POST':
+            form = NewsForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect('/')
+
+        return render(request, 'article_create.html', {'form': form})
+
+
+# Обновление статьи
+class ArticleUpdate(UpdateView):
+    form_class = NewsForm
+    model = News
+    template_name = 'article_edit.html'
+
+
+# Удаление статьи
+class ArticleDelete(DeleteView):
+    model = News
+    template_name = 'article_delete.html'
+    success_url = reverse_lazy('news_list')
