@@ -9,6 +9,7 @@ class NewsForm(forms.ModelForm):
         fields = [
             'title',
             'article',
+            'new_cat'
         ]
 
     # Валидация поля тема
@@ -43,22 +44,3 @@ class NewsForm(forms.ModelForm):
                 "Статья не должна начинаться со строчной буквы"
             )
         return article
-
-# class ArtForm(forms.ModelForm):
-#     class Meta:
-#         model = News
-#         fields = [
-#             'title',
-#             'article',
-#             'article_or_news'
-#         ]
-
-# def __init__(self, *args, **kwargs):
-#     super().__init__(*args, **kwargs)
-#     self.fields["article_or_news"] = 'ARTICLE'  # будем отображать поле на странице как e-mail
-
-# def clean_article_or_news(self):
-#     cleaned_data = super().clean()
-#     article_or_news = self.cleaned_data.get("article_or_news")
-#     cleaned_data["article_or_news"] = article_or_news
-#     return cleaned_data

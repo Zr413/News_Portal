@@ -52,7 +52,7 @@ class NewsCreate(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = Author.objects.get(id=self.request.user.author.id)
-        return super().form_valid(form) and HttpResponseRedirect('/')
+        return super().form_valid(form) and HttpResponseRedirect('/news/')
 
     def create_news(request):
         form = NewsForm()
@@ -60,7 +60,7 @@ class NewsCreate(CreateView):
             form = NewsForm(request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/news/')
 
         return render(request, 'news_create.html', {'form': form})
 
@@ -78,19 +78,6 @@ class NewsDelete(DeleteView):
     template_name = 'news_delete.html'
     success_url = reverse_lazy('news_list')
 
-
-# class NewsSearch(ListView):
-#     model = News
-#     template_name = 'news_search.html'
-#     context_object_name = 'articlesearch'
-#
-#     def get_queryset(self):
-#         # Получаем не отфильтрованный кверисет всех моделей
-#         queryset = News.objects.all()
-#         q = self.request.GET.get("q")
-#         if q:
-#             return queryset.filter(Q(title__icontains=q) | Q(time__icontains=q) | Q(article_or_news__icontains=q))
-#         return queryset
 
 # Поиск по полям статей и новостей
 class NewsSearch(ListView):
@@ -122,15 +109,15 @@ class ArticleCreate(CreateView):
         self.object = form.save(commit=False)
         self.object.author = Author.objects.get(id=self.request.user.author.id)
         self.object.article_or_news = News.ARTICLE
-        return super().form_valid(form) and HttpResponseRedirect('/')
+        return super().form_valid(form) and HttpResponseRedirect('/news/')
 
-    def create_news(request):
+    def create_article(request):
         form = NewsForm()
         if request.method == 'POST':
             form = NewsForm(request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/news/')
 
         return render(request, 'article_create.html', {'form': form})
 

@@ -38,11 +38,12 @@
         <table>
             {% for news in articleviews %}
                 <div>
+                    <p>{% for cat in news.new_cat.all %}
+                        {{ cat.title }}
+                    {% endfor %}</p>
                     <h6>{{ news.time|date:'d.m.Y H:i' }}</h6>
                     <h4><a href="{% url 'news-details' news.pk %}">{{ news.title }}</a></h4>
-                    {#                    <p>{{ news.article|truncatewords:10|censor }}</p>#}
                     <ul>
-                        {#                  truncatechars:15      <li><a href="{% url 'news-details' news %}">{{ news.title }}</a></li>#}
                         <p>{{ news.article|truncatewords:10|censor }}</p>
                     </ul>
                     <hr>

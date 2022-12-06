@@ -23,6 +23,9 @@ class Author(models.Model):
         self.rating = n_rat * 3 + c_rat
         self.save()
 
+    def __str__(self):
+        return f'{self.user}, {self.full_name}, {self.rating}'
+
 
 # Промежуточная таблица для новостей и категорий
 class NewsCategories(models.Model):
@@ -103,3 +106,6 @@ class Comment(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
+    def __str__(self):
+        return f'{self.time.date()}, {self.user}, {self.text}, {self.rating}'
