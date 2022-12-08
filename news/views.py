@@ -9,8 +9,9 @@ from django.urls import reverse_lazy
 from .forms import NewsForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin,
+                                        UserPassesTestMixin)
 
 
 # Вывод списка новостей и статей
@@ -73,6 +74,7 @@ class NewsUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = News
     template_name = 'news_edit.html'
 
+    # Проверка на авторство поста
     def test_func(self):
         obj = self.get_object()
         return obj.author == self.request.user.author
@@ -85,6 +87,7 @@ class NewsDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
     template_name = 'news_delete.html'
     success_url = reverse_lazy('news_list')
 
+    # Проверка на авторство поста
     def test_func(self):
         obj = self.get_object()
         return obj.author == self.request.user.author
@@ -141,6 +144,7 @@ class ArticleUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
     model = News
     template_name = 'article_edit.html'
 
+    # Проверка на авторство поста
     def test_func(self):
         obj = self.get_object()
         return obj.author == self.request.user.author
@@ -153,6 +157,7 @@ class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
     template_name = 'article_delete.html'
     success_url = reverse_lazy('news_list')
 
+    # Проверка на авторство поста
     def test_func(self):
         obj = self.get_object()
         return obj.author == self.request.user.author
