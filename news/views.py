@@ -1,8 +1,7 @@
 from django.views.generic import (ListView, DetailView,
                                   CreateView, UpdateView,
-                                  DeleteView, TemplateView)
+                                  DeleteView)
 
-import news
 from .models import News, Author
 from datetime import datetime
 from .filters import NewsFilter
@@ -10,9 +9,9 @@ from django.urls import reverse_lazy
 from .forms import NewsForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 
-
-# from django.db.models import Q
 
 # Вывод списка новостей и статей
 class NewsList(ListView):
@@ -44,7 +43,9 @@ class NewsDetail(DetailView):
 
 
 # Создание новости
-class NewsCreate(CreateView):
+class NewsCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_news',)
+    raise_exception = True
     form_class = NewsForm
     model = News
     template_name = 'news_create.html'
@@ -52,7 +53,7 @@ class NewsCreate(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.author = Author.objects.get(id=self.request.user.author.id)
-        return super().form_valid(form) and HttpResponseRedirect('/news/')
+        return super().form_valid(form) and HttpResponseRedirect('/')
 
     def create_news(request):
         form = NewsForm()
@@ -60,23 +61,33 @@ class NewsCreate(CreateView):
             form = NewsForm(request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect('/news/')
+                return HttpResponseRedirect('/')
 
         return render(request, 'news_create.html', {'form': form})
 
 
 # Обновление новости
-class NewsUpdate(UpdateView):
+class NewsUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    permission_required = ('news.change_news',)
     form_class = NewsForm
     model = News
     template_name = 'news_edit.html'
 
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user.author
+
 
 # Удаление новости
-class NewsDelete(DeleteView):
+class NewsDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
+    permission_required = ('news.delete_news',)
     model = News
     template_name = 'news_delete.html'
     success_url = reverse_lazy('news_list')
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user.author
 
 
 # Поиск по полям статей и новостей
@@ -100,7 +111,8 @@ class NewsSearch(ListView):
 
 
 # Создание статьи
-class ArticleCreate(CreateView):
+class ArticleCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_news',)
     form_class = NewsForm
     model = News
     template_name = 'article_create.html'
@@ -109,7 +121,7 @@ class ArticleCreate(CreateView):
         self.object = form.save(commit=False)
         self.object.author = Author.objects.get(id=self.request.user.author.id)
         self.object.article_or_news = News.ARTICLE
-        return super().form_valid(form) and HttpResponseRedirect('/news/')
+        return super().form_valid(form) and HttpResponseRedirect('/')
 
     def create_article(request):
         form = NewsForm()
@@ -117,20 +129,30 @@ class ArticleCreate(CreateView):
             form = NewsForm(request.POST)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect('/news/')
+                return HttpResponseRedirect('/')
 
         return render(request, 'article_create.html', {'form': form})
 
 
 # Обновление статьи
-class ArticleUpdate(UpdateView):
+class ArticleUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
+    permission_required = ('news.change_news',)
     form_class = NewsForm
     model = News
     template_name = 'article_edit.html'
 
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user.author
+
 
 # Удаление статьи
-class ArticleDelete(DeleteView):
+class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
+    permission_required = ('news.delete_news',)
     model = News
     template_name = 'article_delete.html'
     success_url = reverse_lazy('news_list')
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user.author

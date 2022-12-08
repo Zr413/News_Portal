@@ -20,15 +20,24 @@
         <input type="submit" value="Поиск">
     </form>
     <br>
-    {# Создание новости #}
-    <form action={% url 'news_create' %}>
-        <input type="submit" value="Создать новость">
-    </form>
-    {# Создание статьи #}
-    <form action={% url 'article_create' %}>
-        <input type="submit" value="Создать статью">
-    </form>
 
+    {# Создание новости #}
+    {% if perms.news.add_news %}
+        <form action={% url 'news_create' %}>
+            <input type="submit" value="Создать новость">
+        </form>
+    {% endif %}
+
+    {# Создание статьи #}
+    {% if perms.news.add_news %}
+        <form action={% url 'article_create' %}>
+            <input type="submit" value="Создать статью">
+        </form>
+    {% endif %}
+
+    <a href="{% url 'account_logout' %}">Выход</a>
+    <br>
+    <a href="{% url 'account_login' %}">Вход</a>
 
     <h3>{% current_time '%d.%m.%Y %A' %}</h3>
     <h3> {{ next_sale|default_if_none:"Следим за новостями!" }} </h3>

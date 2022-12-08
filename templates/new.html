@@ -20,11 +20,15 @@
     <p>{{ art_views.article_or_news }}</p>
     <p>Автор: {{ art_views.author.full_name }}</p>
     <hr>
-    <form action={% url 'news_edit' art_views.pk %}>
-        <input type="submit" value="Редактировать новость">
-    </form>
+    {% if perms.news.change_news %}
+        <form action={% url 'news_edit' art_views.pk %}>
+            <input type="submit" value="Редактировать новость">
+        </form>
+    {% endif %}
     <br>
-    <form action={% url 'news_delete' art_views.pk %}>
-        <input type="submit" value="Удалить новость">
-    </form>
+    {% if perms.news.delete_news %}
+        <form action={% url 'news_delete' art_views.pk %}>
+            <input type="submit" value="Удалить новость">
+        </form>
+    {% endif %}
 {% endblock content %}
