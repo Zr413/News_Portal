@@ -11,24 +11,30 @@
 
 <!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
 {% block content %}
-    <h6>{{ art_views.time|date:'d.m.Y H:i' }}</h6>
-    <p>{% for cat in art_views.new_cat.all %}
-        {{ cat.title }}
-    {% endfor %}</p>
-    <h2>{{ art_views.title }}</h2>
-    <p>{{ art_views.article|censor }}</p>
-    <p>{{ art_views.article_or_news }}</p>
-    <p>Автор: {{ art_views.author.full_name }}</p>
-    <hr>
-    {% if perms.news.change_news %}
-        <form action={% url 'news_edit' art_views.pk %}>
-            <input type="submit" value="Редактировать новость">
-        </form>
-    {% endif %}
-    <br>
-    {% if perms.news.delete_news %}
-        <form action={% url 'news_delete' art_views.pk %}>
-            <input type="submit" value="Удалить новость">
-        </form>
-    {% endif %}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <small class="text-muted">{{ art_views.time|date:'d.m.Y H:i' }}</small>
+                <p>{% for cat in art_views.new_cat.all %}
+                    {{ cat.title }}
+                {% endfor %}</p>
+                <h2 class="article-title">{{ art_views.title }}</h2>
+                <p class="article-content">{{ art_views.article|censor }}</p>
+                <p>{{ art_views.article_or_news }}</p>
+                <p class="mr-2">Автор: {{ art_views.author.full_name }}</p>
+                <hr>
+                {% if perms.news.change_news %}
+                    <form action={% url 'news_edit' art_views.pk %}>
+                        <input type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" value="Редактировать новость">
+                    </form>
+                {% endif %}
+                <br>
+                {% if perms.news.delete_news %}
+                    <form action={% url 'news_delete' art_views.pk %}>
+                        <input type="submit" class="btn btn-danger btn-sm mt-1 mb-1" value="Удалить новость">
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </article>
 {% endblock content %}

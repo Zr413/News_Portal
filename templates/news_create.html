@@ -1,11 +1,17 @@
 {% extends 'flatpages/default.html' %}
 
+{% load custom_tags %}
 {% block content %}
-    <h1>Новая новость</h1>
-    <hr>
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Записать"/>
-    </form>
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Новая запись</legend>
+                {{ form.as_p }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-secondary btn-sm mt-1 mb-1" type="submit">Сохранить</button>
+            </div>
+        </form>
+    </div>
 {% endblock content %}

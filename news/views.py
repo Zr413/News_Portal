@@ -52,8 +52,7 @@ class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     template_name = 'news_create.html'
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.author = Author.objects.get(id=self.request.user.author.id)
+        form.instance.author = self.request.user.author
         return super().form_valid(form) and HttpResponseRedirect('/')
 
     def create_news(request):
@@ -74,10 +73,16 @@ class NewsUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = News
     template_name = 'news_edit.html'
 
+    def form_valid(self, form):
+        form.instance.author = self.request.user.author
+        return super().form_valid(form) and HttpResponseRedirect('/')
+
     # Проверка на авторство поста
     def test_func(self):
-        obj = self.get_object()
-        return obj.author == self.request.user.author
+        post = self.get_object()
+        if self.request.user.author == post.author:
+            return True
+        return False
 
 
 # Удаление новости
@@ -89,8 +94,10 @@ class NewsDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
 
     # Проверка на авторство поста
     def test_func(self):
-        obj = self.get_object()
-        return obj.author == self.request.user.author
+        post = self.get_object()
+        if self.request.user.author == post.author:
+            return True
+        return False
 
 
 # Поиск по полям статей и новостей
@@ -114,15 +121,14 @@ class NewsSearch(ListView):
 
 
 # Создание статьи
-class ArticleCreate(PermissionRequiredMixin, CreateView):
+class ArticleCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = ('news.add_news',)
     form_class = NewsForm
     model = News
     template_name = 'article_create.html'
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.author = Author.objects.get(id=self.request.user.author.id)
+        form.instance.author = self.request.user.author
         self.object.article_or_news = News.ARTICLE
         return super().form_valid(form) and HttpResponseRedirect('/')
 
@@ -144,10 +150,16 @@ class ArticleUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
     model = News
     template_name = 'article_edit.html'
 
+    def form_valid(self, form):
+        form.instance.author = self.request.user.author
+        return super().form_valid(form) and HttpResponseRedirect('/')
+
     # Проверка на авторство поста
     def test_func(self):
-        obj = self.get_object()
-        return obj.author == self.request.user.author
+        post = self.get_object()
+        if self.request.user.author == post.author:
+            return True
+        return False
 
 
 # Удаление статьи
@@ -159,5 +171,7 @@ class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
 
     # Проверка на авторство поста
     def test_func(self):
-        obj = self.get_object()
-        return obj.author == self.request.user.author
+        post = self.get_object()
+        if self.request.user.author == post.author:
+            return True
+        return False

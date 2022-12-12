@@ -17,21 +17,21 @@
     <br>
     {# Поиск #}
     <form action="{% url 'news_search' %}">
-        <input type="submit" value="Поиск">
+        <input type="submit" class="btn btn-outline-info" value="Поиск">
     </form>
     <br>
 
     {# Создание новости #}
     {% if perms.news.add_news %}
         <form action={% url 'news_create' %}>
-            <input type="submit" value="Создать новость">
+            <input type="submit" class="nav-item nav-link" value="Создать новость">
         </form>
     {% endif %}
-
+    <br>
     {# Создание статьи #}
     {% if perms.news.add_news %}
         <form action={% url 'article_create' %}>
-            <input type="submit" value="Создать статью">
+            <input type="submit" class="nav-item nav-link" value="Создать статью">
         </form>
     {% endif %}
 

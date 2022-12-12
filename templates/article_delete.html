@@ -1,12 +1,18 @@
 {% extends 'flatpages/default.html' %}
-
+{% load custom_filters %}!
 {% block content %}
-<h1>Удаление статьи</h1>
-<hr>
-<form action="" method="post">
-    {% csrf_token %}
-    <p>Удалить статью "{{ news.title }}"?</p>
-    <p>{{ news.article|truncatewords:5 }}</p>
-    <input type="submit" value="Удалить" />
-</form>
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Удаление статьи</legend>
+                <h2>Вы уверены, что хотите удалить эту запись?"{{ news.title }}"</h2>
+                <p>{{ news.article|truncatewords:5 }}</p>
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Да, хочу удалить</button>
+                <a class="btn btn-outline-secondary" href="{% url 'news-details' news.pk %}">Отмена</a>
+            </div>
+        </form>
+    </div>
 {% endblock content %}
