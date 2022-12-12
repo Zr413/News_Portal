@@ -1,81 +1,84 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Bare - Start Bootstrap Template</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        {% load static %}
-        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-    </head>
-    <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-           <div class="container">
-                   <a class="navbar-brand" href="#">НОВОСТНОЙ ПОРТАЛ</a>
-               <button class="navbar-toggler" type="button" data-toggle="collapse"
-                       data-target="#navbarResponsive"
-                       aria-controls="navbarResponsive" aria-expanded="false"
-                       aria-label="Toggle navigation">
-                   <span class="navbar-toggler-icon"></span>
-               </button>
-               <div class="collapse navbar-collapse" id="navbarResponsive">
-                   <ul class="navbar-nav ml-auto">
-                       <li class="nav-item active">
-{#                           <a class="nav-link" href="#">Home#}
-{#                               <span class="sr-only">(current)</span>#}
-{#                           </a>#}
-                       </li>
-{#                       <li class="nav-item">#}
-{#                           <a class="nav-link" href="/about/">About</a>#}
-{#                       </li>#}
-{#                       <li class="nav-item">#}
-{#                           <a class="nav-link" href="/contacts/">Contact</a>#}
-{#                       </li>#}
-{#                       <li class="nav-item">#}
-{#                           <a class="nav-link" href="/projects/">Project</a>#}
-{#                       </li>#}
-                   </ul>
-               </div>
-           </div>
-        </nav>
-        <!-- Page content-->
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-conter">
-                    {% block content %}
-                    {% endblock content %}
-                </div>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Bare - Start Bootstrap Template</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    {% load static %}
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand mr-4" href="{% url 'news_list' %}"><i class='bx bxs-rocket bx-tada-hover'></i>
+            News-Portal</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+                aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+                <a class="nav-item nav-link " href="{% url 'news_list' %}">Главная</a>
+                <a class="nav-item nav-link" href="#">О нас</a>
+            </div>
+            <!-- Правая часть навигационной панели -->
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="{% url 'news_search' %}">Поиск</a>
+                <a class="nav-item nav-link" href="{% url 'account_login' %}">Вход</a>
+                <a class="nav-item nav-link" href="{% url 'account_logout' %}">Выход</a>
             </div>
         </div>
-        <br>
-    <footer class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-        <div class="navbar-brand">
-            <h3>IT<i class="navbar-brand"></i>News-Portal</h3>
-            <p>Новостной ресурс, только свежие новости.</p>
-{#            <ul class="socials">#}
-{#                <li><a href="#"><i class="fa fa-facebook"></i></a></li>#}
-{#                <li><a href="#"><i class="fa fa-twitter"></i></a></li>#}
-{#                <li><a href="#"><i class="fa fa-telegram"></i></a></li>#}
-{#                <li><a href="#"><i class="fa fa-youtube"></i></a></li>#}
-{#                <li><a href="#"><i class="fa fa-linkedin-square"></i></a></li>#}
-{#            </ul>#}
+    </div>
+</nav>
+{#    </div>#}
+{#</nav>#}
+<body>
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-8">
+            {% block content %}
+
+            {% endblock %}
         </div>
-        <div class="footer-bottom">
-            <p>Все права принадлежат &copy; News-Portal</p>
-                    <div class="footer-menu">
-                      <ul class="f-menu">
-                        <li><a href="">Главная</a></li>
-                        <li><a href="">О проекте</a></li>
-                        <li><a href="">Контакты</a></li>
-                        <li><a href="">Блог</a></li>
-                      </ul>
-                    </div>
+        <div class="col-md-4">
+            <div class="content-section">
+                <h3>Разделы</h3>
+                <p class='text-muted'>новости и события
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-light">Новые записи</li>
+                    <li class="list-group-item list-group-item-light">Новости IT</li>
+                    <li class="list-group-item list-group-item-light">...........</li>
+                    <li class="list-group-item list-group-item-light">...........</li>
+                </ul>
+                </p>
+            </div>
         </div>
-    </footer>
-    </body>
+    </div>
+
+</main>
+<br>
+<!-- Футер закреплен внизу, независимо от количества постов на странице -->
+<footer class="text-center bg-dark">
+    <p><a href="{% url 'news_list' %}">© News-Portal 2022</a></p>
+</footer>
+
+<!-- Дополнительные скрипты JavaScript -->
+<!-- Сначала jQuery, затем Popper.js, последним Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
 </html>
+
+
