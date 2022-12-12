@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.yandex',
 ]
 
+DEFAULT_FROM_EMAIL = 'z0rinan@yande.ru'
+
 SITE_ID = 1
 # AUTH_USER_MODEL = 'users.CustomUser'
 
@@ -159,5 +161,17 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 
-
-# AUTH_USER_MODEL = 'users.User'
+CLIENT_ID = os.getenv("CLIENT_ID")
+SECRET = os.getenv("SECRET")
+SOCIALACCOUNT_PROVIDERS = {
+    'yandex': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': CLIENT_ID,
+            'secret': SECRET,
+            'key': ''
+        }
+    }
+}
