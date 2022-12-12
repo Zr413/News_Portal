@@ -44,7 +44,7 @@ class NewsDetail(DetailView):
 
 
 # Создание новости
-class NewsCreate(PermissionRequiredMixin, CreateView):
+class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     permission_required = ('news.add_news',)
     raise_exception = True
     form_class = NewsForm

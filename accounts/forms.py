@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from allauth.account.forms import SignupForm
 from django.contrib.auth.models import Group
+from news.models import Author
 
 
 # Форма регистрации
@@ -27,6 +28,8 @@ class SignUpForm(UserCreationForm):
 class CustomSignupForm(SignupForm):
     def save(self, request):
         user = super().save(request)
-        common_users = Group.objects.get(name="authors")
-        user.groups.add(common_users)
+        authors = Group.objects.get(name="authors")
+        user.groups.add(authors)
+        user.save()
+        Author.objects.create(full_name=user.username, user_id=user.id)
         return user
