@@ -15,13 +15,13 @@
         <div class="media-body">
             <div class="article-metadata">
                 <small class="text-muted">{{ art_views.time|date:'d.m.Y H:i' }}</small>
+                <small class="text-muted">(автор: {{ art_views.author.full_name }})</small><br>
                 <p>{% for cat in art_views.new_cat.all %}
-                    {{ cat.title }}
+                    <small class="fw-bold">категория: <a
+                            href="{% url 'categori_list' cat.id %}">{{ cat.title }}</a></small>
                 {% endfor %}</p>
                 <h2 class="article-title">{{ art_views.title }}</h2>
                 <p class="article-content">{{ art_views.article|censor }}</p>
-                <p>{{ art_views.article_or_news }}</p>
-                <p class="mr-2">Автор: {{ art_views.author.full_name }}</p>
                 <hr>
                 {% if perms.news.change_news %}
                     <form action={% url 'news_edit' art_views.pk %}>

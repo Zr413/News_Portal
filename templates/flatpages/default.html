@@ -29,6 +29,12 @@
             <!-- Правая часть навигационной панели -->
             <div class="navbar-nav">
                 <a class="nav-item nav-link" href="{% url 'news_search' %}">Поиск</a>
+                {% if perms.news.add_news %}
+                    <a class="nav-item nav-link" href="{% url 'news_create' %}">Создать новость</a>
+                {% endif %}
+                {% if perms.news.add_news %}
+                    <a class="nav-item nav-link" href="{% url 'article_create' %}">Создать статью</a>
+                {% endif %}
                 <a class="nav-item nav-link" href="{% url 'account_login' %}">Вход</a>
                 <a class="nav-item nav-link" href="{% url 'account_logout' %}">Выход</a>
             </div>

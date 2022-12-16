@@ -29,7 +29,7 @@ class CustomSignupForm(SignupForm):
     def save(self, request):
         user = super().save(request)
         authors = Group.objects.get(name="authors")
-        user.groups.add(authors)
-        user.save()
-        Author.objects.create(full_name=user.username, user_id=user.id)
+        if not request.user.groups.filter(name='authors').exists():
+            authors.user_set.add(user)
+            user.groups.add(authors)
         return user

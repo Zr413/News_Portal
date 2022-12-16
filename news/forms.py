@@ -1,4 +1,6 @@
 from django import forms
+from django.forms.utils import ErrorList
+
 from .models import News
 from django.core.exceptions import ValidationError
 
@@ -9,8 +11,26 @@ class NewsForm(forms.ModelForm):
         fields = [
             'title',
             'article',
-            'new_cat'
+            'new_cat',
         ]
+
+    def __init__(
+            self,
+            data=None,
+            files=None,
+            auto_id="id_%s",
+            prefix=None,
+            initial=None,
+            error_class=ErrorList,
+            label_suffix=None,
+            empty_permitted=False,
+            instance=None,
+            use_required_attribute=None,
+            renderer=None,
+    ):
+        super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance,
+                         use_required_attribute, renderer)
+        self.News = None
 
     # Валидация поля тема
     def clean(self):

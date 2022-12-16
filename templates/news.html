@@ -16,52 +16,58 @@
     <!-- <h3>{{ time_now|date:'d M Y l' }}</h3> -->
     <br>
     {# Поиск #}
-{#    <form action="{% url 'news_search' %}">#}
-{#        <input type="submit" class="btn btn-outline-info" value="Поиск">#}
-{#    </form>#}
-{#    <br>#}
+    {#    <form action="{% url 'news_search' %}">#}
+    {#        <input type="submit" class="btn btn-outline-info" value="Поиск">#}
+    {#    </form>#}
+    {#    <br>#}
 
     {# Создание новости #}
-    {% if perms.news.add_news %}
-        <form action={% url 'news_create' %}>
-            <input type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" value="Создать новость">
-        </form>
-    {% endif %}
-    <br>
-    {# Создание статьи #}
-    {% if perms.news.add_news %}
-        <form action={% url 'article_create' %}>
-            <input type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" value="Создать статью">
-        </form>
-    {% endif %}
-
-{#    <a href="{% url 'account_logout' %}">Выход</a>#}
+{#    {% if perms.news.add_news %}#}
+{#        <form action={% url 'news_create' %}>#}
+{#            <input type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" value="Создать новость">#}
+{#        </form>#}
+{#    {% endif %}#}
 {#    <br>#}
-{#    <a href="{% url 'account_login' %}">Вход</a>#}
+    {# Создание статьи #}
+{#    {% if perms.news.add_news %}#}
+{#        <form action={% url 'article_create' %}>#}
+{#            <input type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" value="Создать статью">#}
+{#        </form>#}
+{#    {% endif %}#}
+
+    {#    <a href="{% url 'account_logout' %}">Выход</a>#}
+    {#    <br>#}
+    {#    <a href="{% url 'account_login' %}">Вход</a>#}
 
     <h3>{% current_time '%d.%m.%Y %A' %}</h3>
     <h3> {{ next_sale|default_if_none:"Следим за новостями!" }} </h3>
 
     <hr>
     {% if articleviews %}
-        <table>
+        <ul class="list-group">
             {% for news in articleviews %}
-                <article class="media content-section">
-                    <div class="media-body">
-                        <div class="article-metadata">
-                            <p>{% for cat in news.new_cat.all %}
-                                {{ cat.title }}
-                            {% endfor %}</p>
-                            <h6>{{ news.time|date:'d.m.Y H:i' }}</h6>
-                            <h4><a href="{% url 'news-details' news.pk %}">{{ news.title }}</a></h4>
-                            <p class="article-content">{{ news.article|truncatewords:10|censor }}</p>
-                            <hr>
+                <li class="list-group-item">
+                    <article class="media content-section">
+                        <div class="media-body">
+                            <div class="article-metadata">
+                                <small class="text-muted">{{ news.time|date:'d.m.Y H:i' }}</small>
+                                <small class="text-muted">(автор: {{ news.author.full_name }})</small><br>
+                                <p>{% for cat in news.new_cat.all %}
+                                    <small class="fw-bold">категория: <a
+                                            href="{% url 'categori_list' cat.id %}">{{ cat.title }}</a></small>
+                                {% endfor %}</p>
+                                <p class="article-title"><a href="{% url 'news-details' news.pk %}">{{ news.title }}</a>
+                                </p>
+                                <p class="article-content">{{ news.article|truncatechars:200|censor }}</p>
+
+                            </div>
                         </div>
-                    </div>
-                </article>
+                    </article>
+                </li>
             {% endfor %}
 
-        </table>
+            </table>
+        </ul>
     {% else %}
         <h2>Новостей нет!</h2>
 
