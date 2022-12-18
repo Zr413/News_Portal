@@ -1,4 +1,3 @@
-{% extends 'flatpages/default.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,9 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>{{ appointment.client_name }} Спасибо за запись!</h2>
-    <p> Вы записаны на {{ news.date|date:"d-M-Y" }} по вопросу: {{ appointment.message|truncatechars:50 }} </p>
+<h2>Здравствуй! Новая <a href="{{ link }}">статья</a> в твоем любимом разделе</h2>
+<ul>
+    {{ text }}
+</ul>
 </body>
 </html>

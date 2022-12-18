@@ -4,8 +4,9 @@ from django.db.models.signals import post_save, m2m_changed, pre_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 
-from News_Portal.settings import SITE_URL, DEFAULT_FROM_EMAIL
-from .models import NewsCategories, News, Author
+from News_Portal import settings
+from .models import Author, NewsCategories
+
 # from .views import ArticleCreate
 
 User = get_user_model()
@@ -31,14 +32,14 @@ def send_notifications(preview, pk, title, subscribes):
         'post_created_email.html',
         {
             'text': preview,
-            'link': f'{SITE_URL}{pk}'
+            'link': f'{settings.SITE_URL}/{pk}'
         }
     )
 
     msg = EmailMultiAlternatives(
         subject=title,
         body='',
-        from_email=DEFAULT_FROM_EMAIL,
+        from_email=settings.DEFAULT_FROM_EMAIL,
         to=subscribes,
     )
 
@@ -51,8 +52,8 @@ def notify_about_new_news(sender, instance, **kwargs):
     if kwargs['action'] == 'post_add':
         categories = instance.new_cat.all()
         subscribes: list[str] = []
-        for new_cat in categories:
-            subscribes += new_cat.subscribes.all()
+        for cat in categories:
+            subscribes += cat.subscribes.all()
 
         subscribes = [s.email for s in subscribes]
 

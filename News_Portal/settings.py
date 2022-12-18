@@ -191,3 +191,5 @@ SITE_URL = 'http://127.0.0.1:8000/'
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
