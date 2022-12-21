@@ -55,8 +55,6 @@ INSTALLED_APPS = [
     'celery',
 ]
 
-DEFAULT_FROM_EMAIL = 'z0rinan@yande.ru'
-
 SITE_ID = 1
 # AUTH_USER_MODEL = 'users.CustomUser'
 

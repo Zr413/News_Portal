@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from News_Portal import settings
 from news.models import Categories, News
 
-
+# Рассылка новостей за последнюю неделю
 @shared_task
 def send_email_every_monday():
     #  Your job processing logic here...

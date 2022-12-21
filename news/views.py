@@ -8,8 +8,8 @@ from datetime import datetime
 from .filters import NewsFilter
 from django.urls import reverse_lazy
 from .forms import NewsForm
-from django.http import HttpResponseRedirect, HttpResponse
-from .tasks import news
+from django.http import HttpResponseRedirect
+
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin,
@@ -215,7 +215,3 @@ def subscrib(request, pk):
 
     message = 'Вы успешно подписались на категорию'
     return render(request, 'subscribe.html', {'categori': subscribes, 'message': message})
-
-
-def new_add(request):
-    return HttpResponse()
