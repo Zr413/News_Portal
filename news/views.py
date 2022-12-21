@@ -8,7 +8,8 @@ from datetime import datetime
 from .filters import NewsFilter
 from django.urls import reverse_lazy
 from .forms import NewsForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+from .tasks import news
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin,
@@ -187,7 +188,7 @@ class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
 #         premium_group.user_set.add(user)
 #     return redirect('/')
 
-
+# Вывод всех категорий по выбранному значению
 class CategoriListView(ListView):
     model = News
     template_name = 'categori_list.html'
@@ -205,6 +206,7 @@ class CategoriListView(ListView):
         return context
 
 
+# Подписка на выбранную категорию новостей
 @login_required
 def subscrib(request, pk):
     user = request.user
@@ -213,3 +215,7 @@ def subscrib(request, pk):
 
     message = 'Вы успешно подписались на категорию'
     return render(request, 'subscribe.html', {'categori': subscribes, 'message': message})
+
+
+def new_add(request):
+    return HttpResponse()

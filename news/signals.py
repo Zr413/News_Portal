@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 from News_Portal import settings
 from .models import Author, NewsCategories
 
-# from .views import ArticleCreate
 
 User = get_user_model()
 
