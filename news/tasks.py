@@ -1,14 +1,57 @@
-from celery import shared_task
-from django.shortcuts import render
+import datetime
 
-from news.models import Categories
+from celery import shared_task
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+from News_Portal import settings
+from news.models import Categories, News
 
 
 @shared_task
-def subscrib(request, pk):
-    user = request.user
-    subscribes = Categories.objects.get(id=pk)
-    subscribes.subscribes.add(user)
+def send_email_every_monday():
+    #  Your job processing logic here...
+    today = datetime.datetime.now()
+    last_week = today - datetime.timedelta(days=7)
+    news = News.objects.filter(time__gte=last_week)
+    categories = set(news.values_list('new_cat__title', flat=True))
+    subscribes = set(Categories.objects.filter(title__in=categories).values_list('subscribes__email', flat=True))
+    html_content = render_to_string(
+        'daily_post.html',
+        {
+            'link': settings.SITE_URL,
+            'news': news,
+        }
+    )
 
-    message = 'Вы успешно подписались на категорию'
-    return render(request, 'subscribe.html', {'categori': subscribes, 'message': message})
+    msg = EmailMultiAlternatives(
+        subject='Статьи за неделю',
+        body='',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=subscribes,
+    )
+
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
+
+
+# Отправка уведомления подписчику, в случае добавления новости
+@shared_task
+def send_notifications(preview, pk, title, subscribes):
+    html_content = render_to_string(
+        'post_created_email.html',
+        {
+            'text': preview,
+            'link': f'{settings.SITE_URL}/{pk}'
+        }
+    )
+
+    msg = EmailMultiAlternatives(
+        subject=title,
+        body='',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=subscribes,
+    )
+
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
