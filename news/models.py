@@ -5,6 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+from django.core.cache import cache
+
 
 # Таблица с сущностью автора
 class Author(models.Model):
@@ -84,6 +86,10 @@ class News(models.Model):
 
     def get_absolute_url(self):
         return reverse('news-details', args=[str(self.id)])
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'news-{self.pk}')  # затем удаляем его из кэша, чтобы сбросить его
 
 
 # Таблица с комментариями

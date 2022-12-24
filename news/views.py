@@ -3,6 +3,8 @@ from django.views.generic import (ListView, DetailView,
                                   CreateView, UpdateView,
                                   DeleteView)
 
+from django.core.cache import cache
+
 from .models import News, Categories
 from datetime import datetime
 from .filters import NewsFilter
@@ -43,6 +45,17 @@ class NewsDetail(DetailView):
     model = News
     template_name = 'new.html'
     context_object_name = 'art_views'
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
+
+        obj = cache.get(f'product-{self.kwargs["pk"]}', None)
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'product-{self.kwargs["pk"]}', obj)
+
+        return obj
 
 
 # Создание новости

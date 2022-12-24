@@ -67,6 +67,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'News_Portal.urls'
@@ -175,8 +178,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-# EMAIL_H_U = os.getenv("EMAIL_H_U")
-# EMAIL_H_P = os.getenv("EMAIL_H_P")
+# настройки рассылки email
 
 EMAIL_HOST = 'smtp.yandex.ru'  # адрес сервера Яндекс-почты для всех один и тот же
 EMAIL_PORT = 465  # порт smtp сервера тоже одинаковый
@@ -194,8 +196,18 @@ APSCHEDULER_RUN_NOW_TIMEOUT = 25
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Настройки celery и redis
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
 SELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
+
+# настройки кеширования
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+        'TIMEOUT': 60,
+    }
+}

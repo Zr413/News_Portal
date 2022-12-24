@@ -4,6 +4,7 @@ from .views import (NewsList, NewsDetail,
                     NewsDelete, NewsSearch,
                     ArticleCreate, ArticleUpdate,
                     ArticleDelete, CategoriListView, subscrib)
+# from django.views.decorators.cache import cache_page
 
 urlpatterns = [
     path('', NewsList.as_view(), name='news_list'),
