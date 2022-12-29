@@ -3,12 +3,15 @@ from django.views.generic import (ListView, DetailView,
                                   CreateView, UpdateView,
                                   DeleteView)
 
+from django.core.cache import cache
+
 from .models import News, Categories
 from datetime import datetime
 from .filters import NewsFilter
 from django.urls import reverse_lazy
 from .forms import NewsForm
 from django.http import HttpResponseRedirect
+
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin,
@@ -42,6 +45,17 @@ class NewsDetail(DetailView):
     model = News
     template_name = 'new.html'
     context_object_name = 'art_views'
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
+
+        obj = cache.get(f'product-{self.kwargs["pk"]}', None)
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'product-{self.kwargs["pk"]}', obj)
+
+        return obj
 
 
 # Создание новости
@@ -187,7 +201,7 @@ class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
 #         premium_group.user_set.add(user)
 #     return redirect('/')
 
-
+# Вывод всех категорий по выбранному значению
 class CategoriListView(ListView):
     model = News
     template_name = 'categori_list.html'
@@ -205,6 +219,7 @@ class CategoriListView(ListView):
         return context
 
 
+# Подписка на выбранную категорию новостей
 @login_required
 def subscrib(request, pk):
     user = request.user
