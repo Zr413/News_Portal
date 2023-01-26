@@ -17,6 +17,9 @@ from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin,
                                         UserPassesTestMixin)
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Вывод списка новостей и статей
 class NewsList(ListView):
@@ -42,6 +45,8 @@ class NewsList(ListView):
 
 # Вывод статьи или новости
 class NewsDetail(DetailView):
+    logger.info("INFO")
+
     model = News
     template_name = 'new.html'
     context_object_name = 'art_views'
@@ -60,6 +65,8 @@ class NewsDetail(DetailView):
 
 # Создание новости
 class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    logger.info("INFO")
+
     permission_required = ('news.add_news',)
     raise_exception = True
     form_class = NewsForm
@@ -83,6 +90,8 @@ class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 # Обновление новости
 class NewsUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    logger.info("INFO")
+
     permission_required = ('news.change_news',)
     form_class = NewsForm
     model = News
@@ -102,6 +111,8 @@ class NewsUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 # Удаление новости
 class NewsDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
+    logger.info("INFO")
+
     permission_required = ('news.delete_news',)
     model = News
     template_name = 'news_delete.html'
@@ -117,6 +128,8 @@ class NewsDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
 
 # Поиск по полям статей и новостей
 class NewsSearch(ListView):
+    logger.info("INFO")
+
     model = News
     template_name = 'news_search.html'
     context_object_name = 'articlesearch'
@@ -137,6 +150,8 @@ class NewsSearch(ListView):
 
 # Создание статьи
 class ArticleCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    logger.info("INFO")
+
     permission_required = ('news.add_news',)
     raise_exception = True
     form_class = NewsForm
@@ -161,6 +176,8 @@ class ArticleCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 # Обновление статьи
 class ArticleUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
+    logger.info("INFO")
+
     permission_required = ('news.change_news',)
     form_class = NewsForm
     model = News
@@ -180,6 +197,8 @@ class ArticleUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
 
 # Удаление статьи
 class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
+    logger.info("INFO")
+
     permission_required = ('news.delete_news',)
     model = News
     template_name = 'article_delete.html'
@@ -203,6 +222,8 @@ class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
 
 # Вывод всех категорий по выбранному значению
 class CategoriListView(ListView):
+    logger.info("INFO")
+
     model = News
     template_name = 'categori_list.html'
     context_object_name = 'categori_news_list'
