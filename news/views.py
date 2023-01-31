@@ -5,12 +5,22 @@ from django.views.generic import (ListView, DetailView,
 
 from django.core.cache import cache
 
+from django.utils.translation import gettext as _  # импортируем функцию для перевода
+# from django.utils.translation import activate, get_supported_language_variant, LANGUAGE_SESSION_KEY
+from django.utils import timezone
+
+from django.shortcuts import redirect
+
+import pytz  # импортируем стандартный модуль для работы с часовыми поясами
+
+from django.views import View
+
 from .models import News, Categories
 from datetime import datetime
 from .filters import NewsFilter
 from django.urls import reverse_lazy
 from .forms import NewsForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import (LoginRequiredMixin,
@@ -20,6 +30,7 @@ from django.contrib.auth.mixins import (LoginRequiredMixin,
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 # Вывод списка новостей и статей
 class NewsList(ListView):
@@ -249,3 +260,34 @@ def subscrib(request, pk):
 
     message = 'Вы успешно подписались на категорию'
     return render(request, 'subscribe.html', {'categori': subscribes, 'message': message})
+
+
+# common_timezones = {
+#     'London': 'Europe/London',
+#     'Paris': 'Europe/Paris',
+#     'New York': 'America/New_York',
+# }
+#
+#
+# def set_timezone(request):
+#     if request.method == 'POST':
+#         request.session['django_timezone'] = request.POST['timezone']
+#         return redirect('/')
+#     else:
+#         return render(request, 'flatpages/default.html', {'timezones': common_timezones})
+
+
+class Index(View):
+    def get(self, request):
+
+        context = {
+            'current_time': timezone.now(),
+            'timezones': pytz.common_timezones  # добавляем в контекст все доступные часовые пояса
+        }
+
+        return HttpResponse(render(request, 'index.html', context))
+
+    #  по пост-запросу будем добавлять в сессию часовой пояс, который и будет обрабатываться написанным нами ранее middleware
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')

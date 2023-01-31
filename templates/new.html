@@ -1,5 +1,6 @@
 <!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
+{% load i18n %}
 {% load custom_filters %}!
 <!-- Подключаем новый файл с нашим тегом -->
 
@@ -15,9 +16,9 @@
         <div class="media-body">
             <div class="article-metadata">
                 <small class="text-muted">{{ art_views.time|date:'d.m.Y H:i' }}</small>
-                <small class="text-muted">(автор: {{ art_views.author.full_name }})</small><br>
+                <small class="text-muted">({% trans 'author' %}: {{ art_views.author.full_name }})</small><br>
                 <p>{% for cat in art_views.new_cat.all %}
-                    <small class="fw-bold">категория: <a
+                    <small class="fw-bold">{% trans 'category' %}: <a
                             href="{% url 'categori_list' cat.id %}">{{ cat.title }}</a></small>
                 {% endfor %}</p>
                 <h2 class="article-title">{{ art_views.title }}</h2>
@@ -25,13 +26,19 @@
                 <hr>
                 {% if perms.news.change_news %}
                     <form action={% url 'news_edit' art_views.pk %}>
-                        <input type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" value="Редактировать новость">
+                        <div class="form-group">
+                            <button class="btn btn-secondary btn-sm mt-1 mb-1"
+                                    type="submit">{% translate 'Edit news' %}</button>
+                        </div>
                     </form>
                 {% endif %}
                 <br>
                 {% if perms.news.delete_news %}
                     <form action={% url 'news_delete' art_views.pk %}>
-                        <input type="submit" class="btn btn-danger btn-sm mt-1 mb-1" value="Удалить новость">
+                        <div class="form-group">
+                            <button class="btn btn-danger btn-sm mt-1 mb-1"
+                                    type="submit">{% translate 'Delete news' %}</button>
+                        </div>
                     </form>
                 {% endif %}
             </div>

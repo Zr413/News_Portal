@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -67,6 +68,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'news.middlewares.TimezoneMiddleware',
     # 'django.middleware.cache.UpdateCacheMiddleware',
     # 'django.middleware.common.CommonMiddleware',
     # 'django.middleware.cache.FetchFromCacheMiddleware',
@@ -141,6 +144,15 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale')
+]
+
+LANGUAGES = [
+    ('en-us', 'English'),
+    ('ru', 'Русский')
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -274,7 +286,7 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '{asctime} | {levelname} | {module} | {message}',
+            'format': '{asctime} | {levelname} | {message}',
             'datefmt': '%Y-%m-%d %H:%M:%S',
             'style': '{',
         },
@@ -294,7 +306,7 @@ LOGGING = {
             'style': '{',
         },
         'mail_error_formatter': {
-            'format': '{asctime} | {levelname} | {message} |\n{pathname} |\n{message}',
+            'format': '{asctime} | {levelname} | {message} |\n{pathname}',
             'datefmt': '%Y-%m-%d %H:%M:%S',
             'style': '{',
         },
@@ -310,12 +322,12 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file_general', 'console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['console_error', 'file_error', 'mail_error', 'console_warning'],
-            'level': 'WARNING',
+            'handlers': ['file_error', 'mail_error'],
+            'level': 'ERROR',
             'propagate': False,
         },
         'django.server': {
@@ -335,9 +347,8 @@ LOGGING = {
         },
         'django.security': {
             'handlers': ['file_security'],
-            'level': 'WARNING',
+            'level': 'INFO',
             'propagate': True,
         },
     },
 }
-

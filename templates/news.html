@@ -1,16 +1,17 @@
 {% extends 'flatpages/default.html' %}
-
-{% load custom_filters %}!
+{% load i18n %}
+{% load tz %}
+{% load custom_filters %}
 <!-- Подключаем новый файл с нашим тегом -->
 
 {% load custom_tags %}
 
 {% block title %}
-    News
+    {% trans 'News' %}
 {% endblock title %}
 
 {% block content %}
-    <h1>Новости на сегодня</h1>
+    <h1>{% trans 'News for today' %}</h1>
 
 
     <!-- <h3>{{ time_now|date:'d M Y l' }}</h3> -->
@@ -40,7 +41,7 @@
     {#    <a href="{% url 'account_login' %}">Вход</a>#}
 
     <h3>{% current_time '%d.%m.%Y %A' %}</h3>
-    <h3> {{ next_sale|default_if_none:"Следим за новостями!" }} </h3>
+    <h3> {{ next_sale|default_if_none:"We follow the news!" }} </h3>
 
     <hr>
     {% if articleviews %}
@@ -51,9 +52,9 @@
                         <div class="media-body">
                             <div class="article-metadata">
                                 <small class="text-muted">{{ news.time|date:'d.m.Y H:i' }}</small>
-                                <small class="text-muted">(автор: {{ news.author.full_name }})</small><br>
+                                <small class="text-muted">({% trans 'author' %}: {{ news.author.full_name }})</small><br>
                                 <p>{% for cat in news.new_cat.all %}
-                                    <small class="fw-bold">категория: <a
+                                    <small class="fw-bold">{% trans 'category' %}: <a
                                             href="{% url 'categori_list' cat.id %}">{{ cat.title }}</a></small>
                                 {% endfor %}</p>
                                 <p class="article-title"><a href="{% url 'news-details' news.pk %}">{{ news.title }}</a>
@@ -69,7 +70,7 @@
             </table>
         </ul>
     {% else %}
-        <h2>Новостей нет!</h2>
+        <h2>{% trans 'No news!' %}</h2>
 
     {% endif %}
 

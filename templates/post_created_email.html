@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+{% load i18n %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{% trans 'Document' %}</title>
 </head>
 <body>
-<h2>Здравствуй! Новая <a href="{{ link }}">статья</a> в твоем любимом разделе</h2>
+<h2>{% trans 'Hello! New' %} <a href="{{ link }}">{% trans 'article' %}</a> {% trans 'in your favorite section' %}</h2>
 <ul>
     {{ text }}
 </ul>

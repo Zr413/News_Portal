@@ -1,4 +1,5 @@
 {% extends 'flatpages/default.html' %}
+{% load i18n %}
 {% load custom_filters %}
 <!-- Подключаем новый файл с нашим тегом -->
 
@@ -9,10 +10,10 @@
     {##}
     <form action="" method="get">
         {{ filterset.form.as_p }}
-        <input type="submit" value="Найти">
+        <input type="submit" value="{% trans 'Find' %}">
     </form>
 
-    <h1>Результат поиска</h1>
+    <h1>{% trans 'Search results' %}</h1>
     {% if articlesearch %}
         <table>
             {% for art in articlesearch %}
@@ -22,12 +23,12 @@
                         <h4>{{ art.title }}</h4>
                     </div>
                     <form action={{ art.get_absolute_url }}>
-                        <input type="submit" value="Читать далее">
+                        <input type="submit" value="{% trans 'Read more' %}">
                     </form>
                     <hr>
                 </article>
             {% empty %}
-                <p>Не найдено публикаций по вашему запросу<br>Попробуйте повторить запрос с другой формулировкой</p>
+                <p>{% trans 'No publications found for your query' %}<br>{% trans 'Try again with a different wording' %}</p>
             {% endfor %}
         </table>
     {% endif %}
