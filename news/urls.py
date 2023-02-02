@@ -17,5 +17,7 @@ urlpatterns = [
     path('<int:pk>/edit/', ArticleUpdate.as_view(), name='article_edit'),
     path('<int:pk>/del/', ArticleDelete.as_view(), name='article_delete'),
     path('categories/<int:pk>', CategoriListView.as_view(), name='categori_list'),
-    path('categories/<int:pk>/subscribe/', subscrib, name='subscribe')
+    path('categories/<int:pk>/subscribe/', subscrib, name='subscribe'),
+    # path('', set_timezone, name='set_timezone'),
+
 ]

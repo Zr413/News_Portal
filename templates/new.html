@@ -1,9 +1,8 @@
 <!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 {% load i18n %}
-{% load custom_filters %}!
-<!-- Подключаем новый файл с нашим тегом -->
-
+{% load tz %}
+{% load custom_filters %}
 {% load custom_tags %}
 <!-- Название у нас будет Product -->
 {% block title %}

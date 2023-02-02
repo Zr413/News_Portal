@@ -1,33 +1,23 @@
+import logging
+from datetime import datetime
+from django.utils import timezone
+import pytz  # Импортируем стандартный модуль для работы с часовыми поясами
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin,
+                                        UserPassesTestMixin)
+from django.core.cache import cache
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy
 from django.views.generic import (ListView, DetailView,
                                   CreateView, UpdateView,
                                   DeleteView)
 
-from django.core.cache import cache
-
-from django.utils.translation import gettext as _  # импортируем функцию для перевода
-# from django.utils.translation import activate, get_supported_language_variant, LANGUAGE_SESSION_KEY
-from django.utils import timezone
-
-from django.shortcuts import redirect
-
-import pytz  # импортируем стандартный модуль для работы с часовыми поясами
-
-from django.views import View
-
-from .models import News, Categories
-from datetime import datetime
 from .filters import NewsFilter
-from django.urls import reverse_lazy
 from .forms import NewsForm
-from django.http import HttpResponseRedirect, HttpResponse
-
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.mixins import (LoginRequiredMixin,
-                                        PermissionRequiredMixin,
-                                        UserPassesTestMixin)
-
-import logging
+from .models import News, Categories
 
 logger = logging.getLogger(__name__)
 
@@ -48,10 +38,16 @@ class NewsList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['time_now'] = datetime.utcnow()
+        # context['time_now'] = datetime.utcnow()
         context['filterset'] = self.filterset
         context['next_sale'] = None
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
         return context
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
 
 
 # Вывод статьи или новости
@@ -72,6 +68,16 @@ class NewsDetail(DetailView):
             cache.set(f'product-{self.kwargs["pk"]}', obj)
 
         return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
+        return context
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
 
 
 # Создание новости
@@ -98,6 +104,12 @@ class NewsCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
         return render(request, 'news_create.html', {'form': form})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
+        return context
+
 
 # Обновление новости
 class NewsUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -119,6 +131,12 @@ class NewsUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
+        return context
+
 
 # Удаление новости
 class NewsDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -136,6 +154,12 @@ class NewsDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
             return True
         return False
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
+        return context
+
 
 # Поиск по полям статей и новостей
 class NewsSearch(ListView):
@@ -151,12 +175,18 @@ class NewsSearch(ListView):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
         context['time_now'] = datetime.utcnow()
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
         return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
         self.filterset = NewsFilter(self.request.GET, queryset)
         return self.filterset.qs
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
 
 
 # Создание статьи
@@ -184,6 +214,12 @@ class ArticleCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
         return render(request, 'article_create.html', {'form': form})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
+        return context
+
 
 # Обновление статьи
 class ArticleUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -205,6 +241,12 @@ class ArticleUpdate(PermissionRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
+        return context
+
 
 # Удаление статьи
 class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -221,6 +263,12 @@ class ArticleDelete(PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.author == post.author:
             return True
         return False
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
+        return context
 
 
 # @login_required
@@ -248,7 +296,13 @@ class CategoriListView(ListView):
         context = super().get_context_data(**kwargs)
         context['is_not_subscriber'] = self.request.user not in self.new_cat.subscribes.all()
         context['new_cat'] = self.new_cat
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
         return context
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
 
 
 # Подписка на выбранную категорию новостей
@@ -260,34 +314,3 @@ def subscrib(request, pk):
 
     message = 'Вы успешно подписались на категорию'
     return render(request, 'subscribe.html', {'categori': subscribes, 'message': message})
-
-
-# common_timezones = {
-#     'London': 'Europe/London',
-#     'Paris': 'Europe/Paris',
-#     'New York': 'America/New_York',
-# }
-#
-#
-# def set_timezone(request):
-#     if request.method == 'POST':
-#         request.session['django_timezone'] = request.POST['timezone']
-#         return redirect('/')
-#     else:
-#         return render(request, 'flatpages/default.html', {'timezones': common_timezones})
-
-
-class Index(View):
-    def get(self, request):
-
-        context = {
-            'current_time': timezone.now(),
-            'timezones': pytz.common_timezones  # добавляем в контекст все доступные часовые пояса
-        }
-
-        return HttpResponse(render(request, 'index.html', context))
-
-    #  по пост-запросу будем добавлять в сессию часовой пояс, который и будет обрабатываться написанным нами ранее middleware
-    def post(self, request):
-        request.session['django_timezone'] = request.POST['timezone']
-        return redirect('/')
