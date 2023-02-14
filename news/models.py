@@ -11,6 +11,7 @@ class Author(models.Model):
     full_name = models.CharField(max_length=150)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
 
     # Обновление рейтинга автора на основании лайков и дизлайков
     def update_rating(self):
@@ -37,6 +38,7 @@ class NewsCategories(models.Model):
 class Categories(models.Model):
     title = models.CharField(max_length=250, unique=True)
     subscribes = models.ManyToManyField(User, related_name='categories')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title.title()
@@ -80,7 +82,7 @@ class News(models.Model):
         return f'{self.article}'
 
     def __str__(self):
-        return f'{self.time.date()}, {self.title.title()}: {self.article}'
+        return f'{self.time.date()}, {self.title.title()}: {self.article}, {self.title.title()}: {self.new_cat}'
 
     def get_absolute_url(self):
         return reverse('news-details', args=[str(self.id)])

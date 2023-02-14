@@ -11,33 +11,8 @@
 {% block content %}
     <h1>{% trans 'News for today' %}</h1>
 
-
     <!-- <h3>{{ time_now|date:'d M Y l' }}</h3> -->
     <br>
-    {# Поиск #}
-    {#    <form action="{% url 'news_search' %}">#}
-    {#        <input type="submit" class="btn btn-outline-info" value="Поиск">#}
-    {#    </form>#}
-    {#    <br>#}
-
-    {# Создание новости #}
-{#    {% if perms.news.add_news %}#}
-{#        <form action={% url 'news_create' %}>#}
-{#            <input type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" value="Создать новость">#}
-{#        </form>#}
-{#    {% endif %}#}
-{#    <br>#}
-    {# Создание статьи #}
-{#    {% if perms.news.add_news %}#}
-{#        <form action={% url 'article_create' %}>#}
-{#            <input type="submit" class="btn btn-secondary btn-sm mt-1 mb-1" value="Создать статью">#}
-{#        </form>#}
-{#    {% endif %}#}
-
-    {#    <a href="{% url 'account_logout' %}">Выход</a>#}
-    {#    <br>#}
-    {#    <a href="{% url 'account_login' %}">Вход</a>#}
-
     <h3>{% current_time '%d.%m.%Y %A' %}</h3>
     <h3> {{ next_sale|default_if_none:"We follow the news!" }} </h3>
 
@@ -58,7 +33,6 @@
                                 <p class="article-title"><a href="{% url 'news-details' news.pk %}">{{ news.title }}</a>
                                 </p>
                                 <p class="article-content">{{ news.article|truncatechars:200|censor }}</p>
-
                             </div>
                         </div>
                     </article>
@@ -69,9 +43,7 @@
         </ul>
     {% else %}
         <h2>{% trans 'No news!' %}</h2>
-
     {% endif %}
-
     {% if page_obj.has_previous %}
         <a href="?{% url_replace page=1 %}">1</a>
         {% if page_obj.previous_page_number != 1 %}

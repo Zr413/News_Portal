@@ -7,19 +7,7 @@
 <head>
     {% get_hour as HOUR %}
 
-    {% if HOUR > 19 or HOUR < 7 %}
-{#        <style>#}
-{#            body {#}
-{#                background-color: lime;#}
-{#            }#}
-{#        </style>#}
-        <style>
-            body {
-                background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %}
-                    moccasin {% else %} DarkGray {% endif %};
-            }
-        </style>
-    {% endif %}
+
     {% load static %}
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -32,7 +20,7 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
 </head>
 <body>
-{{ string }} <!-- Это уже знакомая нам переменная, просто засунули её в шаблон -->
+{#{{ string }} <!-- Это уже знакомая нам переменная, просто засунули её в шаблон -->#}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
     <div class="container">
         <a class="navbar-brand mr-4" href="{% url 'news_list' %}"><i class='bx bxs-rocket bx-tada-hover'></i>

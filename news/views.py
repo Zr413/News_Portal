@@ -1,6 +1,6 @@
 import logging
-from datetime import datetime
-from django.utils import timezone
+
+import django_filters
 import pytz  # Импортируем стандартный модуль для работы с часовыми поясами
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (LoginRequiredMixin,
@@ -11,15 +11,23 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import (ListView, DetailView,
                                   CreateView, UpdateView,
                                   DeleteView)
+from rest_framework import viewsets, status, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from .filters import NewsFilter
 from .forms import NewsForm
-from .models import News, Categories
 
 logger = logging.getLogger(__name__)
+
+from news.serializers import *
 
 
 # Вывод списка новостей и статей
@@ -314,3 +322,62 @@ def subscrib(request, pk):
 
     message = 'Вы успешно подписались на категорию'
     return render(request, 'subscribe.html', {'categori': subscribes, 'message': message})
+
+
+class NewsViewset(viewsets.ModelViewSet):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = News.objects.all()
+        auth_id = self.request.query_params.get('auth_id', None)
+        news_id = self.request.query_params.get('news_categories', None)
+        if auth_id is not None:
+            queryset = queryset.filter(author_id=auth_id)
+        if news_id is not None:
+            queryset = queryset.filter(new_cat=news_id)
+        return queryset
+
+
+class UserViewset(viewsets.ModelViewSet):
+    queryset = User.objects.all().filter(is_active=True)
+    serializer_class = UserSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ["username", "email", "password"]
+
+
+class AuthorViewset(viewsets.ModelViewSet):
+    queryset = Author.objects.all().filter(is_active=True)
+    serializer_class = AuthorSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ["full_name", ]
+
+    def destroy(self, request, pk, format=None):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CategoriesViewset(viewsets.ModelViewSet):
+    queryset = Categories.objects.all().filter(is_active=True)
+    serializer_class = CategoriesSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ["title", ]
+
+    def destroy(self, request, pk, format=None):
+        instance = self.get_object()
+        instance.is_active = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class GetList(APIView):
+    @swagger_auto_schema(
+        operation_description='Get',
+        responses={200: 'OK'},
+    )
+    def get(self, request):
+        ob = News.objects.all()
+        return Response(ob, status=status.HTTP_200_OK)
